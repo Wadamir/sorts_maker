@@ -1,0 +1,13 @@
+.env
+cookies.txt
+/bot/config.py
+.vscode/settings.json
+/storage/db/*
+/storage/db/bot.sqlite3
+/storage/auth/
+/.vscode/
+/.vscode/*
+/bot/_legacy/
+/bot/_legacy/*
+__pycache__/
+*.pyc
