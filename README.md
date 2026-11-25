@@ -1,241 +1,75 @@
-# Telegram Bot Clean Template
+# Shorts Maker
 
-A clean, production-ready template for building Telegram bots in Python.
+A Telegram bot that makes YouTube Shorts from a video sent by the client.
 
-This template follows **Clean Architecture (light)** principles:
-- thin Telegram handlers
-- explicit business logic layer
-- clear dependency wiring
-- environment-based configuration
+The client sends a video in chat. The bot cuts it into short vertical clips and returns the finished Shorts.
 
-Designed to be reusable for **any Telegram bot**, from simple utilities to complex services.
+## How it works
 
----
+```text
+Client sends a video
+        ↓
+Handlers — accept the message and the file
+        ↓
+Services — decide what to do with the video
+        ↓
+Pipeline — cut and assemble the Shorts
+        ↓
+Client receives the finished clips
+```
 
-## ✨ Features
+Handlers only accept Telegram updates and hand work to services. Data access goes through repositories. Dependencies are wired in `bot/setup.py`.
 
-- Clean and scalable project structure
-- Explicit configuration via `.env`
-- Business logic isolated in `services/`
-- Thin Telegram handlers
-- Repository pattern for data access
-- Easy to extend and test
-- Docker-ready
-
----
-
-## 📁 Project Structure
+## Layout
 
 ```text
 bot/
-├── main.py            # Application entry point
-├── setup.py           # Composition root (setup_bot)
-│
-├── config/            # Application settings
-├── handlers/          # Telegram handlers (commands, messages, callbacks)
-├── keyboards/         # Inline / Reply keyboards
-├── services/          # Business logic (use cases)
-├── repositories/      # Data access layer
-├── db/                # Database infrastructure
-├── i18n/              # Internationalization
-├── utils/             # Shared helpers
-├── workers/           # Background tasks (optional)
-├── pipeline/          # Processing pipelines (optional)
-└── admin/             # Admin features (optional)
+├── main.py            # process entry point
+├── setup.py           # bot and dependency wiring
+├── config/            # settings from the environment
+├── handlers/          # commands, messages, callbacks
+├── keyboards/         # keyboards
+├── services/          # bot use cases
+├── repositories/      # data access
+├── db/                # database
+├── pipeline/          # Shorts cutting and assembly
+├── workers/           # background tasks
+├── i18n/              # copy
+├── admin/             # admin features
+└── utils/             # shared helpers
 ```
 
----
+## Run
 
-## 🚀 Quick Start
-
-### 1️⃣ Clone the repository
-
-```bash
-git clone https://github.com/your-org/telegram-bot-template.git
-cd telegram-bot-template
-```
-
----
-
-### 2️⃣ Create environment config
+You need Python 3.11 and a bot token from [@BotFather](https://t.me/BotFather).
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and set your bot token:
+Set the token in `.env`:
 
 ```env
 BOT_TOKEN=your_telegram_bot_token
 ```
 
----
-
-### 3️⃣ Install dependencies
+Locally:
 
 ```bash
 pip install -r requirements.txt
-```
-
----
-
-### 4️⃣ Run the bot
-
-```bash
 python -m bot.main
 ```
 
----
-
-## ⚙️ Configuration
-
-All configuration is centralized in:
-
-```text
-bot/config/settings.py
-```
-
-Settings are loaded from environment variables using **Pydantic**.
-
-Example:
-
-```python
-from bot.config.settings import settings
-
-settings.bot_token
-settings.debug
-```
-
-If a required variable is missing, the application will fail fast on startup.
-
----
-
-## 🧠 Architecture Overview
-
-### Flow
-
-```text
-Telegram update
-   ↓
-Handlers (thin)
-   ↓
-Services (business logic)
-   ↓
-Repositories (data access)
-```
-
----
-
-### Handlers
-
-- Only handle Telegram-specific logic
-- Delegate all business rules to services
-
-Example:
-
-```python
-@router.message(Command("start"))
-async def start(message):
-    user_service.ensure_user(message.from_user)
-    await message.answer("Welcome!")
-```
-
----
-
-### Services
-
-- Contain application business logic
-- Independent from Telegram framework
-- Easy to unit-test
-
-Example:
-
-```python
-class UserService:
-    def ensure_user(self, tg_user):
-        ...
-```
-
----
-
-### Repositories
-
-- Responsible for data access
-- Abstract database logic from services
-
----
-
-## 🧩 Dependency Wiring
-
-All dependencies are created and connected in one place:
-
-```text
-bot/setup.py
-```
-
-This file acts as the **composition root** and defines `setup_bot()`.
-
-This approach:
-- avoids hidden dependencies
-- simplifies testing
-- makes the application easier to reason about
-
----
-
-## 🌍 Internationalization (i18n)
-
-Translations are stored in:
-
-```text
-bot/i18n/
-```
-
-You can add new languages by creating a new file, e.g. `de.py`.
-
----
-
-## 🐳 Docker Support
-
-The template includes:
-
-- `Dockerfile`
-- `docker-compose.yml`
-- `docker-compose.dev.yml`
-
-To run with Docker:
+With Docker:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
----
+For development, with the project mounted into the container:
 
-## 🧪 Testing (recommended)
-
-Business logic lives in `services/`, which makes it easy to write unit tests.
-
-Suggested structure:
-
-```text
-tests/
-├── services/
-│   └── test_user_service.py
+```bash
+docker compose -f docker-compose.dev.yml up --build
 ```
 
----
-
-## 📌 Guidelines
-
-- Keep handlers thin
-- Do not access the database directly from handlers
-- Put all business rules into services
-- Keep `setup.py` as the single place for wiring dependencies
-
----
-
-## 📄 License
-
-MIT License.
-
-Feel free to use this template for personal or commercial projects.
-# sorts_maker
+Settings are read from environment variables. `BOT_TOKEN` is required. Database path, app mode, and proxies are listed in `.env.example`.

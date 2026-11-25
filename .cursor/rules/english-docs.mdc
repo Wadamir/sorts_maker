@@ -1,0 +1,18 @@
+---
+description: Code comments and README.md are English only
+alwaysApply: true
+---
+
+# Language
+
+Write code comments, docstrings, and `README.md` in English only.
+
+Chat replies follow the language the user is writing in. This rule does not change that.
+
+```python
+# BAD
+# Скачиваем видео и режем на шорты
+
+# GOOD
+# Download the video and cut it into Shorts
+```
